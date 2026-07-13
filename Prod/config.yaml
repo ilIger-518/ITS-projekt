@@ -5,8 +5,8 @@
 # Statusanzeige über Display (grün, gelb, rot, Initialisierung blau)
 
 esphome:
-  name: "atoms3r-fisi-unit-XY" # Bitte hier Nummer der Gruppe eintragen!
-  friendly_name: "BSZ Sensor Station XY" # Bitte hier Nummer der Gruppe eintragen!
+  name: "atoms3r-fisi-unit-01" # Bitte hier Nummer der Gruppe eintragen!
+  friendly_name: "BSZ Sensor Station 01" # Bitte hier Nummer der Gruppe eintragen!
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -103,12 +103,12 @@ display:
       }
 
 mqtt:
-  broker: "test.mosquitto.org"  # Mosquitto.org nur für den Test!
+  broker: "152.53.144.73"
   port: 1883
-  topic_prefix: "BSZ/E2FI2/Unit-XY"  # <===== Bitte hier Nummer der Gruppe eintragen!
+  topic_prefix: "BSZ/E2FI2/Unit-01"  # <===== Bitte hier Nummer der Gruppe eintragen!
   on_message:
      # Bitte hier Nummer bzw. Topic der PARTNER-Gruppe eintragen!
-    - topic: "BSZ/E2FI2/Unit-YZ/sensor/raumtemperatur/state"
+    - topic: "BSZ/E2FI2/Unit-01/sensor/raumtemperatur/state"
       then:
         - lambda: |-
             // Wert aus MQTT empfangen, konvertieren und in Globale Variable schreiben
