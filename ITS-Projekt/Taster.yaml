@@ -1,0 +1,18 @@
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: 5
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Taster Status"
+    id: button_g5
+    on_state:
+      then:
+        - mqtt.publish:
+            topic: "BSZ/E2FI2/Unit-01/Taster" # Unit-Nummer anpassen!
+            payload: !lambda |-
+              if (x) {
+                return "Taster: 1"; 
+              } else {
+                return "Taster: 0"; 
+              }

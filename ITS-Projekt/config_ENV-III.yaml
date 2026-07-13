@@ -1,0 +1,23 @@
+i2c:
+  # I²C-Bus aktivieren (Sensor kommuniziert darüber)
+  sda: 2
+  scl: 1
+  scan: true
+  id: bus_internal
+
+sensor:
+  # 1. ENV III: Temperatur und Luftfeuchtigkeit (SHT30-Chip, I2C-Adresse 0x44)
+  - platform: sht3xd
+    temperature:
+      name: "Raumtemperatur"
+    humidity:
+      name: "Relative Luftfeuchtigkeit"
+    address: 0x44
+    update_interval: 10s
+
+  # 2. ENV III: Luftdruck (QMP6988-Chip, I2C-Adresse 0x70)
+  - platform: qmp6988
+    pressure:
+      name: "Luftdruck"
+    address: 0x70
+    update_interval: 10s

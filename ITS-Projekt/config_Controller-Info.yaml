@@ -1,0 +1,12 @@
+esphome:
+  name: "atoms3r-fisi-unit-01"
+  friendly_name: "BSZ Sensor Station 01 - 2xWIFI"
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: arduino
+
+logger:
+  level: DEBUG

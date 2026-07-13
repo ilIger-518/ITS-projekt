@@ -1,0 +1,102 @@
+#	Code: 
+#	tjG4JRixW9EBFHsQ
+#  YAML Display Test
+
+
+# Lädt den Community-Treiber für den I2C-LED-Chip herunter
+external_components:
+  - source:
+      type: git
+      url: https://github.com/ssieb/esphome
+      ref: lp5562
+    components: [ lp5562 ]
+
+logger:
+  level: DEBUG 
+
+esphome:
+  name: atoms3r-farbwechsel
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+wifi:
+  ssid: "BSZ-STUDENT"
+  password: "BSZBIBI!"
+
+api:
+ota:
+  - platform: esphome
+
+globals:
+  - id: color_state
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+# 1. Der interne I2C-Bus des AtomS3R für den LED-Chip
+i2c:
+  - id: i2c_internal
+    sda: GPIO45
+    scl: GPIO0
+    scan: true
+
+# 2. Den LP5562-Chip auf diesem Bus registrieren
+lp5562:
+  - i2c_id: i2c_internal
+
+# 3. Den weißen Kanal (Kanal 3) des Chips als Ausgang definieren
+output:
+  - platform: lp5562
+    id: backlight_output
+    channel: 3 
+
+# 4. Das Licht über den Chip einschalten
+light:
+  - platform: monochromatic
+    output: backlight_output
+    name: "AtomS3R Display Backlight"
+    id: atom_backlight
+    restore_mode: ALWAYS_ON
+
+# 5. Die komplett neuen SPI-Pins des AtomS3R
+spi:
+  clk_pin: GPIO15  # Beim normalen AtomS3 war dies 17!
+  mosi_pin: GPIO21
+
+# 6. Die neuen Display-Pins
+display:
+  - platform: st7789v
+    id: oled_display
+    model: CUSTOM
+    width: 128
+    height: 128
+    offset_width: 2
+    offset_height: 1
+    
+    # Das korrekte Routing für das R-Modell
+    cs_pin: GPIO14    
+    dc_pin: GPIO42    
+    reset_pin: GPIO48 
+    
+    rotation: 0
+    update_interval: 1s
+    
+    lambda: |-
+      if (id(color_state) == 0) {
+        it.fill(Color(255, 0, 0));
+        ESP_LOGD("custom_display", "Farbwechsel: Display auf ROT gesetzt.");
+        id(color_state) = 1;
+      } 
+      else if (id(color_state) == 1) {
+        it.fill(Color(0, 255, 0));
+        ESP_LOGD("custom_display", "Farbwechsel: Display auf GRUEN gesetzt.");
+        id(color_state) = 2;
+      } 
+      else {
+        it.fill(Color(0, 0, 255));
+        ESP_LOGD("custom_display", "Farbwechsel: Display auf BLAU gesetzt.");
+        id(color_state) = 0;
+      }
