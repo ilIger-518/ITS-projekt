@@ -16,7 +16,7 @@ logger:
 
 ota:
   - platform: esphome
-    password: "OTA_PASSWORT_HIER"
+    password: "verysecurepassword"
 
 wifi:
   ssid: "BSZ-STUDENT"
