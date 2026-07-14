@@ -32,6 +32,10 @@ globals:
     type: float
     restore_value: false
     initial_value: "-1000.0"
+  - id: button_pressed
+    type: bool
+    restore_value: false
+    initial_value: "false"
 
 external_components:
   - source:
@@ -84,6 +88,11 @@ display:
     rotation: 0
     update_interval: 1s
     lambda: |-
+      if (id(button_pressed)) {
+        it.fill(Color(0, 0, 255));
+        return;
+      }
+
       const float temp = id(partner_temp);
       if (temp < -999.0) {
         it.fill(Color(0, 0, 255));
@@ -142,15 +151,6 @@ mqtt:
             id(partner_temp) = temp;
             ESP_LOGI("mqtt", "Partner-Temperatur empfangen: %.2f", temp);
 
-    - topic: "BSZ/E2FI2/cont01/binary_sensor/taster_status"
-      then:
-        - if:
-            condition:
-              lambda: |-
-                return x == "ON";
-            then:
-              - light.turn_on: atom_backlight
-              
 sensor:
   - platform: sht3xd
     i2c_id: i2c_external
@@ -194,6 +194,16 @@ binary_sensor:
       inverted: true
     name: "Taster Status"
     id: button_g5
+    on_press:
+      then:
+        - lambda: |-
+            id(button_pressed) = true;
+        - component.update: oled_display
+    on_release:
+      then:
+        - lambda: |-
+            id(button_pressed) = false;
+        - component.update: oled_display
     on_state:
       then:
         - mqtt.publish:
