@@ -142,6 +142,15 @@ mqtt:
             id(partner_temp) = temp;
             ESP_LOGI("mqtt", "Partner-Temperatur empfangen: %.2f", temp);
 
+    - topic: "BSZ/E2FI2/cont01/binary_sensor/taster_status"
+      then:
+        - if:
+            condition:
+              lambda: |-
+                return x == "ON";
+            then:
+              - light.turn_on: atom_backlight
+              
 sensor:
   - platform: sht3xd
     i2c_id: i2c_external
